@@ -2,19 +2,19 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="voice-calculator" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
     <title>Calculator</title>
 
     <style>
-          body {
+        body {
     font-family: Arial, sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
     margin: 2;
-    background-color:#f0b6dd ;
+    background-color: #f0b6dd;
 }
 
 .calculator {
@@ -74,7 +74,7 @@ button {
     background-color: #66aaff;
 }
 
-        </style>
+    </style>
 </head>
 <body>
     <div class="calculator">
@@ -113,22 +113,22 @@ button {
     </div>
 
     <script>
-        let resultDisplayed = false;
+       let resultDisplayed = false;
         const display = document.getElementById('display');
         const startRecording = document.getElementById('startRecording');
         const output = document.getElementById('output');
         let isRecording = false; // Track whether recording is active
         let recognition;
-    
+
         // Check if the browser supports the Web Speech API
         if ('webkitSpeechRecognition' in window) {
             recognition = new webkitSpeechRecognition();
-    
+
             // Set recognition properties
             recognition.continuous = false;
             recognition.interimResults = false;
             recognition.lang = 'en-US';
-    
+
             // Event listener for the "Start Recording" button
             startRecording.addEventListener('click', () => {
                 if (!isRecording) {
@@ -140,7 +140,7 @@ button {
                     recognition.stop();
                 }
             });
-    
+
             // Event listener for when speech recognition results are available
             recognition.onresult = (event) => {
                 const transcript = event.results[0][0].transcript;
@@ -151,17 +151,17 @@ button {
                 } else {
                     output.textContent = `Sorry, I didn't understand that.`;
                 }
-    
+
                 // Reset recording button appearance
                 startRecording.textContent = 'Start Recording';
                 startRecording.style.backgroundColor = ''; // Reset button color
                 isRecording = false;
             };
-    
+
             // Event listener for errors during recognition
             recognition.onerror = (event) => {
                 console.error('Speech recognition error:', event.error);
-    
+
                 // Reset recording button appearance
                 startRecording.textContent = 'Start Recording';
                 startRecording.style.backgroundColor = ''; // Reset button color
@@ -172,7 +172,7 @@ button {
             startRecording.disabled = true;
             startRecording.textContent = 'Speech recognition not supported';
         }
-    
+
         // Functions for calculator buttons
         function appendToDisplay(value) {
             if (resultDisplayed) {
@@ -181,16 +181,16 @@ button {
             }
             document.getElementById('display').value += value;
         }
-    
+
         function clearDisplay() {
             document.getElementById('display').value = '';
             resultDisplayed = false;
         }
-    
+
         function calculate() {
             try {
                 const expression = document.getElementById('display').value;
-                const result = evaluateExpression(expression);
+                const result = eval(expression);
                 document.getElementById('display').value = result;
                 resultDisplayed = true;
             } catch (error) {
@@ -199,63 +199,13 @@ button {
                 resultDisplayed = true;
             }
         }
-    
+
         // Function to parse the transcript and extract valid input
         function parseTranscript(transcript) {
             // Implement your logic here to extract valid input from the transcript
             // For simplicity, you can just return the transcript as is for now
             return transcript;
         }
-    
-        // Function to evaluate the expression
-        function evaluateExpression(expression) {
-            // Split the expression by operators (+, -, *, /) and filter out empty strings
-            const tokens = expression.split(/([+\-*/])/).filter(token => token.trim() !== '');
-    
-            // Initialize the result as the first number in the expression
-            let result = parseFloat(tokens[0]);
-    
-            // Iterate through the tokens in pairs (operator and number)
-            for (let i = 1; i < tokens.length; i += 2) {
-                const operator = tokens[i];
-                const number = parseFloat(tokens[i + 1]);
-    
-                if (operator === '+') {
-                    result += number;
-                } else if (operator === '-') {
-                    result -= number;
-                } else if (operator === '*') {
-                    result *= number;
-                } else if (operator === '/') {
-                    if (number === 0) {
-                        throw new Error('Division by zero');
-                    }
-                    result /= number;
-                }
-            }
-    
-            return result;
-        }
-        function parseTranscript(transcript) {
-    // Split the transcript into words
-    const words = transcript.split(' ');
-
-    // Initialize an empty string to store the valid input
-    let validInput = '';
-
-    // Iterate through the words and check if they are valid numbers or operators
-    words.forEach(word => {
-        if (!isNaN(word) || ['+', '-', '*', '/'].includes(word)) {
-            validInput += word;
-        }
-    });
-
-    // Return the valid input
-    return validInput;
-}
-
     </script>
-    </script>
-    
 </body>
 </html>
