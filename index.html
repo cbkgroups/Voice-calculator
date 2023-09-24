@@ -113,99 +113,130 @@ button {
     </div>
 
     <script>
-        let resultDisplayed = false;
-        const display = document.getElementById('display');
-        const startRecording = document.getElementById('startRecording');
-        const output = document.getElementById('output');
-        let isRecording = false; // Track whether recording is active
-        let recognition;
+    let resultDisplayed = false;
+    const display = document.getElementById('display');
+    const startRecording = document.getElementById('startRecording');
+    const output = document.getElementById('output');
+    let isRecording = false; // Track whether recording is active
+    let recognition;
 
-        // Check if the browser supports the Web Speech API
-        if ('webkitSpeechRecognition' in window) {
-            recognition = new webkitSpeechRecognition();
+    // Check if the browser supports the Web Speech API
+    if ('webkitSpeechRecognition' in window) {
+        recognition = new webkitSpeechRecognition();
 
-            // Set recognition properties
-            recognition.continuous = false;
-            recognition.interimResults = false;
-            recognition.lang = 'en-US';
+        // Set recognition properties
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = 'en-US';
 
-            // Event listener for the "Start Recording" button
-            startRecording.addEventListener('click', () => {
-                if (!isRecording) {
-                    startRecording.textContent = 'Recording...'; // Update button text
-                    startRecording.style.backgroundColor = '#ff4444'; // Change button color
-                    isRecording = true;
-                    recognition.start();
-                } else {
-                    recognition.stop();
-                }
-            });
-
-            // Event listener for when speech recognition results are available
-            recognition.onresult = (event) => {
-                const transcript = event.results[0][0].transcript;
-                const input = parseTranscript(transcript);
-                if (input) {
-                    output.textContent = `You said: ${transcript}`;
-                    appendToDisplay(input); // Append recognized input to the calculator display
-                } else {
-                    output.textContent = `Sorry, I didn't understand that.`;
-                }
-
-                // Reset recording button appearance
-                startRecording.textContent = 'Start Recording';
-                startRecording.style.backgroundColor = ''; // Reset button color
-                isRecording = false;
-            };
-
-            // Event listener for errors during recognition
-            recognition.onerror = (event) => {
-                console.error('Speech recognition error:', event.error);
-
-                // Reset recording button appearance
-                startRecording.textContent = 'Start Recording';
-                startRecording.style.backgroundColor = ''; // Reset button color
-                isRecording = false;
-            };
-        } else {
-            // Handle browsers that do not support speech recognition
-            startRecording.disabled = true;
-            startRecording.textContent = 'Speech recognition not supported';
-        }
-
-        // Functions for calculator buttons
-        function appendToDisplay(value) {
-            if (resultDisplayed) {
-                clearDisplay();
-                resultDisplayed = false;
+        // Event listener for the "Start Recording" button
+        startRecording.addEventListener('click', () => {
+            if (!isRecording) {
+                startRecording.textContent = 'Recording...'; // Update button text
+                startRecording.style.backgroundColor = '#ff4444'; // Change button color
+                isRecording = true;
+                recognition.start();
+            } else {
+                recognition.stop();
             }
-            document.getElementById('display').value += value;
-        }
+        });
 
-        function clearDisplay() {
-            document.getElementById('display').value = '';
+        // Event listener for when speech recognition results are available
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            const input = parseTranscript(transcript);
+            if (input) {
+                output.textContent = `You said: ${transcript}`;
+                appendToDisplay(input); // Append recognized input to the calculator display
+            } else {
+                output.textContent = `Sorry, I didn't understand that.`;
+            }
+
+            // Reset recording button appearance
+            startRecording.textContent = 'Start Recording';
+            startRecording.style.backgroundColor = ''; // Reset button color
+            isRecording = false;
+        };
+
+        // Event listener for errors during recognition
+        recognition.onerror = (event) => {
+            console.error('Speech recognition error:', event.error);
+
+            // Reset recording button appearance
+            startRecording.textContent = 'Start Recording';
+            startRecording.style.backgroundColor = ''; // Reset button color
+            isRecording = false;
+        };
+    } else {
+        // Handle browsers that do not support speech recognition
+        startRecording.disabled = true;
+        startRecording.textContent = 'Speech recognition not supported';
+    }
+
+    // Functions for calculator buttons
+    function appendToDisplay(value) {
+        if (resultDisplayed) {
+            clearDisplay();
             resultDisplayed = false;
         }
+        document.getElementById('display').value += value;
+    }
 
-        function calculate() {
-            try {
-                const expression = document.getElementById('display').value;
-                const result = eval(expression);
-                document.getElementById('display').value = result;
-                resultDisplayed = true;
-            } catch (error) {
-                console.error('Error calculating:', error);
-                document.getElementById('display').value = 'Error';
-                resultDisplayed = true;
+    function clearDisplay() {
+        document.getElementById('display').value = '';
+        resultDisplayed = false;
+    }
+
+    function calculate() {
+        try {
+            const expression = document.getElementById('display').value;
+            const result = evaluateExpression(expression);
+            document.getElementById('display').value = result;
+            resultDisplayed = true;
+        } catch (error) {
+            console.error('Error calculating:', error);
+            document.getElementById('display').value = 'Error';
+            resultDisplayed = true;
+        }
+    }
+
+    // Function to parse the transcript and extract valid input
+    function parseTranscript(transcript) {
+        // Implement your logic here to extract valid input from the transcript
+        // For simplicity, you can just return the transcript as is for now
+        return transcript;
+    }
+
+    // Function to evaluate the expression
+    function evaluateExpression(expression) {
+        // Split the expression by operators (+, -, *, /) and filter out empty strings
+        const tokens = expression.split(/([+\-*/])/).filter(token => token.trim() !== '');
+
+        // Initialize the result as the first number in the expression
+        let result = parseFloat(tokens[0]);
+
+        // Iterate through the tokens in pairs (operator and number)
+        for (let i = 1; i < tokens.length; i += 2) {
+            const operator = tokens[i];
+            const number = parseFloat(tokens[i + 1]);
+
+            if (operator === '+') {
+                result += number;
+            } else if (operator === '-') {
+                result -= number;
+            } else if (operator === '*') {
+                result *= number;
+            } else if (operator === '/') {
+                if (number === 0) {
+                    throw new Error('Division by zero');
+                }
+                result /= number;
             }
         }
 
-        // Function to parse the transcript and extract valid input
-        function parseTranscript(transcript) {
-            // Implement your logic here to extract valid input from the transcript
-            // For simplicity, you can just return the transcript as is for now
-            return transcript;
-        }
-    </script>
+        return result;
+    }
+</script>
+
 </body>
 </html>
