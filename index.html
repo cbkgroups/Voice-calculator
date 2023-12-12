@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,74 +9,74 @@
 
     <style>
         body {
-    font-family: Arial, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    margin: 2;
-    background-color: #f0b6dd;
-}
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 2;
+            background-color: #f0b6dd;
+        }
 
-.calculator {
-    background-color: #333;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-}
+        .calculator {
+            background-color: #333;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
 
-.display {
-    background-color: #222;
-    color: white;
-    padding: 10px;
-    border-radius: 5px;
-    margin-bottom: 10px;
-}
+        .display {
+            background-color: #222;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
 
-#display {
-    width: 100%;
-    border: none;
-    color: aliceblue;
-    background-color: transparent;
-    font-size: 24px;
-    text-align: right;
-    outline: none;
-}
+        #display {
+            width: 100%;
+            border: none;
+            color: aliceblue;
+            background-color: transparent;
+            font-size: 24px;
+            text-align: right;
+            outline: none;
+        }
 
-.buttons {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-}
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
 
-button {
-    background-color: #444;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 15px;
-    font-size: 18px;
-    cursor: pointer;
-}
-.a
-{
-  background-color: #66aaff;
-  width: 350px;
-  border-color: #222;
-  text-align: center;
-}
+        button {
+            background-color: #444;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 15px;
+            font-size: 18px;
+            cursor: pointer;
+        }
 
-.clear {
-    grid-column:auto;
-    background-color: #ff4444;
-}
+        .a {
+            background-color: #66aaff;
+            width: 350px;
+            border-color: #222;
+            text-align: center;
+        }
 
-.operator {
-    background-color: #66aaff;
-}
+        .clear {
+            grid-column: auto;
+            background-color: #ff4444;
+        }
 
+        .operator {
+            background-color: #66aaff;
+        }
     </style>
 </head>
+
 <body>
     <div class="calculator">
         <div class="display">
@@ -83,9 +84,9 @@ button {
         </div>
         <button id="startRecording">Start Recording</button>
         <div id="output"></div>
- 
-        <br/>
-        <br/>
+
+        <br />
+        <br />
         <div class="buttons">
             <button class="number" onclick="appendToDisplay('7')">7</button>
             <button class="number" onclick="appendToDisplay('8')">8</button>
@@ -104,16 +105,16 @@ button {
             <button class="number" onclick="appendToDisplay('0')">0</button>
             <button class="operator" onclick="appendToDisplay('/')">/</button>
         </div>
-        
-        
-        <br/>
+
+
+        <br />
         <div class="a">
             <button class="operator" onclick="calculate()" style="height: 65px; width: 350px;">=</button>
         </div>
     </div>
 
     <script>
-       let resultDisplayed = false;
+        let resultDisplayed = false;
         const display = document.getElementById('display');
         const startRecording = document.getElementById('startRecording');
         const output = document.getElementById('output');
@@ -128,6 +129,20 @@ button {
             recognition.continuous = false;
             recognition.interimResults = false;
             recognition.lang = 'en-US';
+
+            // Event listener for the "Start Recording" button
+            startRecording.addEventListener('click', () => {
+                if (!isRecording) {
+                    startRecording.textContent = 'Recording...'; // Update button text
+                    startRecording.style.backgroundColor = '#ff4444'; // Change button color
+                    isRecording = true;
+                    document.getElementById('display').value = ''; // Clear the display when recording starts
+                    recognition.start();
+                } else {
+                    recognition.stop();
+                }
+            });
+
 
             // Event listener for the "Start Recording" button
             startRecording.addEventListener('click', () => {
@@ -208,4 +223,5 @@ button {
         }
     </script>
 </body>
+
 </html>
