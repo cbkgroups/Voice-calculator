@@ -202,18 +202,25 @@
             resultDisplayed = false;
         }
 
-        function calculate() {
-            try {
-                const expression = document.getElementById('display').value;
-                const result = eval(expression);
-                document.getElementById('display').value = result;
-                resultDisplayed = true;
-            } catch (error) {
-                console.error('Error calculating:', error);
-                document.getElementById('display').value = 'Error';
-                resultDisplayed = true;
-            }
+        ffunction calculate() {
+    try {
+        const expression = document.getElementById('display').value;
+        let result = 1; // Initialize result as 1 for multiplication
+        const numbers = expression.split('*');
+
+        // Calculate multiplication of numbers
+        for (let i = 0; i < numbers.length; i++) {
+            result *= parseFloat(numbers[i]);
         }
+
+        document.getElementById('display').value = result;
+        resultDisplayed = true;
+    } catch (error) {
+        console.error('Error calculating:', error);
+        document.getElementById('display').value = 'Error';
+        resultDisplayed = true;
+    }
+}
 
         // Function to parse the transcript and extract valid input
         function parseTranscript(transcript) {
