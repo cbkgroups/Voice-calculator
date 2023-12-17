@@ -78,180 +78,228 @@
         .operator {
             background-color: #66aaff;
         }
+
+        header {
+            background-color: #f0b6dd;
+            padding: 2px 0;
+            text-align: right;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 999; /* Ensure the header stays on top of other elements */
+        }
+        a {
+            
+            color: #f5ecec; /* Change link color */
+            font-weight: bold;
+            font-size: 18px;
+            margin:  15px;
+            transition: color 0.3s ease-in-out;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0; /* Reset default margin */
+            padding-top: 80px; /* Adjust body padding to prevent content from being hidden behind the fixed header */
+        }
+        
+        
     </style>
 </head>
 
+
 <body>
-    <div class="calculator">
-        <div class="display">
-            <input type="text" id="display" readonly>
+    <header>
+        <nav>
+            <ul>
+                <a href="about.html">About</a>
+                <a href="services.html">Services</a>
+                <a href="contact.html">Contact</a>
+                <!-- Add more links as needed -->
+            </ul>
+        </nav>
+    </header>
+<br>
+<br>
+        <div class="calculator">
+            <div class="display">
+                <input type="text" id="display" readonly>
+            </div>
+            <button id="startRecording">Start Recording</button>
+            <button class="clear" onclick="deleteLastEntry()">AC</button>
+            <button class="clear" onclick="clearDisplay()">C</button>
+            <div id="output">
+
+            </div>
+            <br />
+            <br />
+            <div class="buttons">
+
+
+
+                <button class="number" onclick="appendToDisplay('7')">7</button>
+                <button class="number" onclick="appendToDisplay('8')">8</button>
+                <button class="number" onclick="appendToDisplay('9')">9</button>
+                <button class="operator" onclick="appendToDisplay('/')">/</button>
+
+                <button class="number" onclick="appendToDisplay('4')">4</button>
+                <button class="number" onclick="appendToDisplay('5')">5</button>
+                <button class="number" onclick="appendToDisplay('6')">6</button>
+                <button class="operator" onclick="appendToDisplay('*')">*</button>
+
+                <button class="number" onclick="appendToDisplay('1')">1</button>
+                <button class="number" onclick="appendToDisplay('2')">2</button>
+                <button class="number" onclick="appendToDisplay('3')">3</button>
+                <button class="operator" onclick="appendToDisplay('-')">-</button>
+
+                <button class="number" onclick="appendToDisplay('00')">00</button>
+                <button class="number" onclick="appendToDisplay('0')">0</button>
+                <button class="number" onclick="appendToDisplay('.')">.</button>
+                <button class="operator" onclick="appendToDisplay('+')">+</button>
+            </div>
+
+
+            <br />
+            <div class="a">
+                <button class="operator" onclick="calculate()" style="height: 65px; width: 350px;">=</button>
+            </div>
         </div>
-        <button id="startRecording">Start Recording</button>
-        <button class="clear" onclick="deleteLastEntry()">AC</button>
-        <button class="clear" onclick="clearDisplay()">C</button>
-        <div id="output">
 
-        </div>
-        <br />
-        <br />
-        <div class="buttons">
+        <script>
+            let resultDisplayed = false;
+            const display = document.getElementById('display');
+            const startRecording = document.getElementById('startRecording');
+            const output = document.getElementById('output');
+            let isRecording = false; // Track whether recording is active
+            let recognition;
 
+            // Check if the browser supports the Web Speech API
+            if ('webkitSpeechRecognition' in window) {
+                recognition = new webkitSpeechRecognition();
 
+                // Set recognition properties
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                recognition.lang = 'en-US';
 
-            <button class="number" onclick="appendToDisplay('7')">7</button>
-            <button class="number" onclick="appendToDisplay('8')">8</button>
-            <button class="number" onclick="appendToDisplay('9')">9</button>
-            <button class="operator" onclick="appendToDisplay('/')">/</button>
+                // Event listener for the "Start Recording" button
+                startRecording.addEventListener('click', () => {
+                    if (!isRecording) {
+                        startRecording.textContent = 'Recording...'; // Update button text
+                        startRecording.style.backgroundColor = '#ff4444'; // Change button color
+                        isRecording = true;
+                        document.getElementById('display').value = ''; // Clear the display
 
-            <button class="number" onclick="appendToDisplay('4')">4</button>
-            <button class="number" onclick="appendToDisplay('5')">5</button>
-            <button class="number" onclick="appendToDisplay('6')">6</button>
-            <button class="operator" onclick="appendToDisplay('*')">*</button>
+                        recognition.start();
+                    } else {
+                        recognition.stop();
+                    }
+                });
 
-            <button class="number" onclick="appendToDisplay('1')">1</button>
-            <button class="number" onclick="appendToDisplay('2')">2</button>
-            <button class="number" onclick="appendToDisplay('3')">3</button>
-            <button class="operator" onclick="appendToDisplay('-')">-</button>
+                // Event listener for when speech recognition results are available
+                recognition.onresult = (event) => {
+                    const transcript = event.results[0][0].transcript;
+                    const input = parseTranscript(transcript);
+                    if (input) {
+                        ;
+                        appendToDisplay(input); // Append recognized input to the calculator display
+                    } else {
+                        output.textContent = `Sorry, I didn't understand that.`;
+                    }
 
-            <button class="number" onclick="appendToDisplay('00')">00</button>
-            <button class="number" onclick="appendToDisplay('0')">0</button>
-            <button class="number" onclick="appendToDisplay('.')">.</button>
-            <button class="operator" onclick="appendToDisplay('+')">+</button>
-        </div>
+                    // Reset recording button appearance
+                    startRecording.textContent = 'Start Recording';
+                    startRecording.style.backgroundColor = ''; // Reset button color
+                    isRecording = false;
+                };
 
+                // Event listener for errors during recognition
+                recognition.onerror = (event) => {
+                    console.error('Speech recognition error:', event.error);
 
-        <br />
-        <div class="a">
-            <button class="operator" onclick="calculate()" style="height: 65px; width: 350px;">=</button>
-        </div>
-    </div>
-
-    <script>
-        let resultDisplayed = false;
-        const display = document.getElementById('display');
-        const startRecording = document.getElementById('startRecording');
-        const output = document.getElementById('output');
-        let isRecording = false; // Track whether recording is active
-        let recognition;
-
-        // Check if the browser supports the Web Speech API
-        if ('webkitSpeechRecognition' in window) {
-            recognition = new webkitSpeechRecognition();
-
-            // Set recognition properties
-            recognition.continuous = false;
-            recognition.interimResults = false;
-            recognition.lang = 'en-US';
-
-            // Event listener for the "Start Recording" button
-            startRecording.addEventListener('click', () => {
-                if (!isRecording) {
-                    startRecording.textContent = 'Recording...'; // Update button text
-                    startRecording.style.backgroundColor = '#ff4444'; // Change button color
-                    isRecording = true;
-                    document.getElementById('display').value = ''; // Clear the display
-
-                    recognition.start();
-                } else {
-                    recognition.stop();
-                }
-            });
-
-            // Event listener for when speech recognition results are available
-            recognition.onresult = (event) => {
-                const transcript = event.results[0][0].transcript;
-                const input = parseTranscript(transcript);
-                if (input) {
-                    ;
-                    appendToDisplay(input); // Append recognized input to the calculator display
-                } else {
-                    output.textContent = `Sorry, I didn't understand that.`;
-                }
-
-                // Reset recording button appearance
-                startRecording.textContent = 'Start Recording';
-                startRecording.style.backgroundColor = ''; // Reset button color
-                isRecording = false;
-            };
-
-            // Event listener for errors during recognition
-            recognition.onerror = (event) => {
-                console.error('Speech recognition error:', event.error);
-
-                // Reset recording button appearance
-                startRecording.textContent = 'Start Recording';
-                startRecording.style.backgroundColor = ''; // Reset button color
-                isRecording = false;
-            };
-        } else {
-            // Handle browsers that do not support speech recognition
-            startRecording.disabled = true;
-            startRecording.textContent = 'Speech recognition not supported';
-        }
-        
-        
-        
-
-        // Functions for calculator buttons
-        function appendToDisplay(value) {
-            if (resultDisplayed) {
-                clearDisplay();
-                resultDisplayed = false;
-            }
-            document.getElementById('display').value += value;
-        }
-
-        function clearDisplay() {
-            document.getElementById('display').value = '';
-            resultDisplayed = false;
-        }
-
-        function calculate() {
-            try {
-                const expression = document.getElementById('display').value;
-                const result = eval(expression);
-                document.getElementById('display').value = result;
-                resultDisplayed = true;
-            } catch (error) {
-                console.error('Error calculating:', error);
-                document.getElementById('display').value = 'Error';
-                resultDisplayed = true;
-            }
-        }
-        function appendToDisplay(value) {
-            if (resultDisplayed) {
-                clearDisplay();
-                resultDisplayed = false;
-            }
-            // For power operation (^), replace the visual representation
-            if (value === '^') {
-                document.getElementById('display').value += '^';
-            } else if (value === '**') {
-                document.getElementById('display').value += '^';
+                    // Reset recording button appearance
+                    startRecording.textContent = 'Start Recording';
+                    startRecording.style.backgroundColor = ''; // Reset button color
+                    isRecording = false;
+                };
             } else {
+                // Handle browsers that do not support speech recognition
+                startRecording.disabled = true;
+                startRecording.textContent = 'Speech recognition not supported';
+            }
+
+
+
+
+            // Functions for calculator buttons
+            function appendToDisplay(value) {
+                if (resultDisplayed) {
+                    clearDisplay();
+                    resultDisplayed = false;
+                }
                 document.getElementById('display').value += value;
             }
-        }
 
-        function deleteLastEntry() {
-            const displayValue = document.getElementById('display').value;
-            document.getElementById('display').value = displayValue.slice(0, -1);
-        }
-        // Function to parse the transcript and extract valid input
-        function parseTranscript(transcript) {
-            // Regex to test if the transcript contains alphabetic characters
-            const containsAlphabets = /[a-zA-Z]/.test(transcript);
-
-            // If transcript contains alphabetic characters, return an empty string
-            if (containsAlphabets) {
-                return '';
+            function clearDisplay() {
+                document.getElementById('display').value = '';
+                resultDisplayed = false;
             }
 
-            // For non-alphabetic input, return the transcript as is
-            return transcript;
-        }
+            function calculate() {
+                try {
+                    const expression = document.getElementById('display').value;
+                    const result = eval(expression);
+                    document.getElementById('display').value = result;
+                    resultDisplayed = true;
+                } catch (error) {
+                    console.error('Error calculating:', error);
+                    document.getElementById('display').value = 'Error';
+                    resultDisplayed = true;
+                }
+            }
+            function appendToDisplay(value) {
+                if (resultDisplayed) {
+                    clearDisplay();
+                    resultDisplayed = false;
+                }
+                // For power operation (^), replace the visual representation
+                if (value === '^') {
+                    document.getElementById('display').value += '^';
+                } else if (value === '**') {
+                    document.getElementById('display').value += '^';
+                } else {
+                    document.getElementById('display').value += value;
+                }
+            }
 
-    </script>
+            function deleteLastEntry() {
+                const displayValue = document.getElementById('display').value;
+                document.getElementById('display').value = displayValue.slice(0, -1);
+            }
+            // Function to parse the transcript and extract valid input
+            function parseTranscript(transcript) {
+                // Regex to test if the transcript contains alphabetic characters
+                const containsAlphabets = /[a-zA-Z]/.test(transcript);
+
+                // If transcript contains alphabetic characters, return an empty string
+                if (containsAlphabets) {
+                    return '';
+                }
+
+                // For non-alphabetic input, return the transcript as is
+                return transcript;
+            }
+            // Function to display the welcome alert
+            function showWelcomeAlert() {
+                alert("Welcome! This is voice calculator 'an initiative by CBK groups' " );
+            }
+
+            // Call the function when the page loads
+            window.onload = function () {
+                showWelcomeAlert();
+            };
+        </script>
 </body>
 
 </html>
