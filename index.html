@@ -68,16 +68,15 @@
 
         .clear {
             grid-column: auto;
-            background-color: #ff4444;
+            background-color: #fa0707;
+            position: relative;
+            right: -90px;
+            bottom: 22x;
         }
+
 
         .operator {
             background-color: #66aaff;
-        }
-        #historyButton {
-            position: relative;
-            right:-105px;
-            bottom: 22x; 
         }
     </style>
 </head>
@@ -88,36 +87,36 @@
             <input type="text" id="display" readonly>
         </div>
         <button id="startRecording">Start Recording</button>
-        <button id="historyButton" onclick="showHistory()">History</button>
-        <div id="output"></div>
+        <button class="clear" onclick="deleteLastEntry()">AC</button>
+        <button class="clear" onclick="clearDisplay()">C</button>
+        <div id="output">
+
+        </div>
         <br />
         <br />
         <div class="buttons">
 
-            <button class="clear" onclick="clearDisplay()">C</button>
-            <button class="clear" onclick="deleteLastEntry()">AC</button>
-            <button class="clear" onclick="appendToDisplay('^')">^</button>
-            <button class="operator" onclick="appendToDisplay('%')">%</button>
+
 
             <button class="number" onclick="appendToDisplay('7')">7</button>
             <button class="number" onclick="appendToDisplay('8')">8</button>
             <button class="number" onclick="appendToDisplay('9')">9</button>
-            <button class="operator" onclick="appendToDisplay('+')">+</button>
+            <button class="operator" onclick="appendToDisplay('/')">/</button>
 
             <button class="number" onclick="appendToDisplay('4')">4</button>
             <button class="number" onclick="appendToDisplay('5')">5</button>
             <button class="number" onclick="appendToDisplay('6')">6</button>
-            <button class="operator" onclick="appendToDisplay('-')">-</button>
+            <button class="operator" onclick="appendToDisplay('*')">*</button>
 
             <button class="number" onclick="appendToDisplay('1')">1</button>
             <button class="number" onclick="appendToDisplay('2')">2</button>
             <button class="number" onclick="appendToDisplay('3')">3</button>
-            <button class="operator" onclick="appendToDisplay('*')">*</button>
+            <button class="operator" onclick="appendToDisplay('-')">-</button>
 
             <button class="number" onclick="appendToDisplay('00')">00</button>
             <button class="number" onclick="appendToDisplay('0')">0</button>
             <button class="number" onclick="appendToDisplay('.')">.</button>
-            <button class="operator" onclick="appendToDisplay('/')">/</button>
+            <button class="operator" onclick="appendToDisplay('+')">+</button>
         </div>
 
 
